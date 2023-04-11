@@ -1,0 +1,310 @@
+#include "HashTable.h"
+
+Hash_Table::Hash_Table(tm* default_time){
+    for (int i=0; i<tableSize; i++) {
+        HashTable[i] = new UserAcc;
+        HashTable[i]->uname = "empty";
+        HashTable[i]->password = "empty";
+        HashTable[i]->last_active_time = default_time;
+        HashTable[i]->next = NULL;
+    }
+}
+
+//Hash function
+int Hash_Table::Hash(string key) {
+    int hash_sum = 0;
+    int index;
+    for (int i=0; i<key.length(); i++) {
+        hash_sum = hash_sum + (int) key[i];
+    }
+    index = hash_sum % tableSize;
+    return index;
+}
+
+void Hash_Table::AddUserAcc(string uname, string password, tm* last_active_time){
+    int index = Hash(uname);
+    if (HashTable[index]->uname == "empty") {
+        HashTable[index]->uname = uname;
+        HashTable[index]->password = password;
+        HashTable[index]->last_active_time = last_active_time;
+    }else {
+        //here is for solving hash collision, append nodes to the linked lists on the bucket
+        UserAcc* ptr = HashTable[index];
+        UserAcc* n = new UserAcc;
+        n->uname = uname;
+        n->password = password;
+        n->last_active_time = last_active_time;
+        n->next = NULL;
+        while (ptr->next != NULL) {
+            ptr = ptr->next;
+        }
+        ptr->next = n;
+    }
+};
+
+int Hash_Table::NumberOfUserAccInIndex(int index){
+    int count = 0;
+    if (HashTable[index]->uname == "empty"){
+        return count;
+    }
+
+    UserAcc* ptr = HashTable[index];
+    while(ptr->next != NULL) {
+        ptr = ptr->next;
+        count++;
+    }
+    count++;
+    return count;
+};
+
+void Hash_Table::PrintTable(){
+    int number;
+    for (int i=0; i<tableSize; i++) {
+        number = NumberOfUserAccInIndex(i);
+        cout << "-----------------------------" << endl;
+        cout << "First user acc at index = " << i << endl;
+        cout << HashTable[i]->uname << endl;
+        cout << HashTable[i]->password << endl;
+        cout << tm2string(HashTable[i]->last_active_time) << endl;
+        cout << "# of total user accs at index "<< i << " = " << number << endl;
+        cout << "-----------------------------" << endl;
+    }
+};
+
+void Hash_Table::PrintUserAccInIndex(int index){
+    cout << "----------START--------------" << endl;
+    cout << "User Acc 1 at index = " << index << endl;
+    cout << HashTable[index]->uname << endl;
+    cout << HashTable[index]->password << endl;
+    cout << tm2string(HashTable[index]->last_active_time) << endl;
+    cout << endl;
+    int count = 2;
+    UserAcc* ptr = HashTable[index];
+    while (ptr->next != NULL) {
+        ptr = ptr -> next;
+        cout << "UserAcc " << count << " at index = " << index << endl;
+        cout << ptr->uname << endl;
+        cout << ptr->password << endl;
+        cout << tm2string(ptr->last_active_time) << endl;
+        cout << endl;
+        count++;
+    }
+
+    cout << "-----------END-------------" << endl << endl;
+};
+
+string Hash_Table::SearchForUname(string uname){
+    int index = Hash(uname);
+    int found = 0;
+    UserAcc* ptr = HashTable[index];
+    string pwd;
+    while (ptr != NULL){
+        if (ptr->uname == uname) {
+            found = 1;
+            pwd = ptr -> password;
+            break;
+        }
+        ptr = ptr->next;
+    }
+
+    if (!found) {
+        return "NULL";
+    } else {
+        return pwd;
+    }
+};
+
+int Hash_Table::UpdatePwd(string uname){
+    string new_pwd;
+    int index = Hash(uname);
+    int found = 0;
+    UserAcc* ptr = HashTable[index];
+    string pwd;
+    while (ptr != NULL){
+        if (ptr->uname == uname) {
+            found = 1;
+            cout << "Enter new password: ";
+            cin >> new_pwd;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            ptr->password = new_pwd;
+            cout << "Password has been updated successfully!" << endl;
+            break;
+        }
+        ptr = ptr->next;
+    }
+    return found;
+}
+
+void Hash_Table::UpdateLastActive(string uname, tm* last_active_time){
+    int index = Hash(uname);
+    int found = 0;
+    UserAcc* ptr = HashTable[index];
+    string pwd;
+    while (ptr != NULL){
+        if (ptr->uname == uname) {
+            found = 1;
+            pwd = ptr -> password;
+            break;
+        }
+        ptr = ptr->next;
+    }
+
+    if (!found) {
+        cout << "Username not found!" << endl;
+    } else {
+        tm* temp = ptr->last_active_time;
+        delete temp;
+        ptr->last_active_time = last_active_time;
+    }
+};
+
+void Hash_Table::DeleteAllInactiveCustAcc() {
+    UserAcc* current = NULL;
+    time_t now = time(0);
+    tm* ltm = localtime(&now);
+    cout << "current_time = " << ltm->tm_year << endl;
+    cout << "current_time = " << ltm->tm_mon << endl;
+    int diff_year;
+    int diff_month;
+    bool delete_bucket = false; // indicates if the bucket has been deleted
+    bool delete_node = false; // indicates if the node on linked list has been deleted
+    cout << "BEfore deletion: " << endl;
+    PrintUserAccInIndex(6);
+    for (int i=0; i<tableSize; i++) {
+        delete_bucket = false;
+        if (i == 5) {
+            continue;
+        }
+        if (HashTable[i]->uname != "empty") {
+            diff_year = ltm->tm_year - HashTable[i]->last_active_time->tm_year;
+            diff_month = ltm->tm_mon - HashTable[i]->last_active_time->tm_mon;
+            cout << "dif year = " << diff_year << endl;
+            cout << "dif mon = " << diff_month << endl;
+            
+            if ((diff_year == 1 && diff_month >= 0) || diff_year >= 2) {
+                RemoveUserAcc(HashTable[i]->uname);
+                delete_bucket = true;
+                PrintUserAccInIndex(6);
+                cout << "HI" << endl;
+            }
+
+            if (delete_bucket) {
+                current = HashTable[i];
+            } else {
+                current = HashTable[i]->next;
+            }
+            while (current != NULL) {
+                cout << "WHILE loop again!" << endl;
+                cout << "current = " << current << endl;
+                cout << "current->uname = " << current->uname << endl;
+                //cout << "current->uname = " << current->uname << endl;
+                
+                if (current->uname == "empty" && current->password == "empty") {
+                    // the bucket is empty ady, which means this while loop is going to be infinite since current nvr equals NULL
+                    break;
+                }
+                
+                delete_node = false;
+                diff_year = ltm->tm_year - current->last_active_time->tm_year;
+                diff_month = ltm->tm_mon - current->last_active_time->tm_mon;
+                if ((diff_year == 1 && diff_month >= 0) || diff_year >= 2) {
+                    cout << "B4 REMOVE!" << endl;
+                    
+                    RemoveUserAcc(current->uname); //mustard can't be deleted, probably becoz 
+                    cout << "AFTER REMOVE!" << endl;
+                    PrintUserAccInIndex(6);
+                    delete_node = true;
+                }
+                if (!delete_node) {
+                    current = current-> next;
+                }
+                cout << "END of WHILE loop again!" << endl;
+            }
+            current = NULL;
+        } else {
+            continue;
+        }
+    }
+}
+
+void Hash_Table::RemoveUserAcc(string uname){
+    tm* default_time = new tm;
+    default_time->tm_hour = 0;   default_time->tm_min = 0; default_time->tm_sec = 0;
+    default_time->tm_year = 0; default_time->tm_mon = 0; default_time->tm_mday = 1;
+
+    int index = Hash(uname);
+    UserAcc* delPtr;
+    UserAcc* P1;
+    UserAcc* P2;
+
+    //Case 0 - bucket is empty
+    if (HashTable[index] -> uname == "empty" && HashTable[index] -> uname == "empty") {
+        cout << uname << " wasn't found in the Hash Table!" << endl;
+    }
+    //Case 1 - only 1 item contained in bucket and that item has matching name
+    else if (HashTable[index] -> uname == uname && HashTable[index] -> next == NULL) {
+        HashTable[index] -> uname = "empty";
+        HashTable[index] -> password = "empty";
+        tm* temp = HashTable[index] -> last_active_time;
+        delete temp;
+        HashTable[index] -> last_active_time = default_time;
+    }
+    //Case 2 - match is located in the first item in the bucket but there aremore items in the bucket
+    else if (HashTable[index] -> uname == uname) {
+        delPtr = HashTable[index]; 
+        HashTable[index] = HashTable[index] -> next;
+        delete delPtr;
+        //cout << uname << " was removed from the Hash Table!" << endl;
+    }
+    //Case 3 - Bucket contains items but first item is not a match
+    else {
+        P1 = HashTable[index] -> next;
+        P2 = HashTable[index];
+
+        while (P1 != NULL && P1 -> uname != uname) {
+            P2 = P1;
+            P1 = P1 -> next;
+        }
+
+        //Case 3.1 - no match
+        if (P1 == NULL) {
+            //cout << uname << " wasn't found in the Hash Table!" << endl;
+        }
+        //Case 3.2 - match is found 
+        else {
+            delPtr = P1;
+            P1 = P1 -> next;
+            P2 -> next = P1;
+
+            delete delPtr;
+            cout << uname << " was removed from the Hash Table!" << endl;
+        }
+    }   
+    cout << "Removed uname = " <<uname << endl;
+};
+
+void Hash_Table::PrintUserAccsInTableForm() {
+    UserAcc* current = NULL;
+    bool printed = false;
+    for (int i=0; i<tableSize; i++) {
+        if (HashTable[i]->uname != "empty") {
+            cout << HashTable[i]->uname << ", ";
+            cout << HashTable[i]->password << ", ";
+            cout << tm2string(HashTable[i]->last_active_time) << endl;
+            printed = true;
+            current = HashTable[i]->next;
+            while (current != NULL) {
+                cout << current->uname << ", ";
+                cout << current->password << ", ";
+                cout << tm2string(current->last_active_time) << endl;
+                current = current-> next;
+            }
+            current = NULL;
+        } else {
+            continue;
+        }
+    }
+    if (!printed) {
+        cout << "Hash Table is empty!" << endl;
+    }
+}
