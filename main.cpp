@@ -31,7 +31,7 @@ void DisplayUniInfo(UniArray* uniArray) {
     system("cls");
     char res;
     cout << "**********Displaying All Universities Information**********" << endl;
-    cout << "| Rank | Uni_name | Location | Location_code |" << endl;
+    cout << "| No. | Uni_name | Location | Location_code |" << endl;
     for (int i = 0; i < 20; i++) {
         cout << i + 1 << ". "<< uniArray->getUniversity(i).rank << ", ";
         cout << uniArray->getUniversity(i).inst_name << ", ";
@@ -159,7 +159,7 @@ void LoginAsAdmin(Hash_Table* admin_acc_hs, FeedbackList* fList, Hash_Table* cus
                     new_current_time->tm_year = current_time->tm_year;
                     new_current_time->tm_mon = current_time->tm_mon;
                     new_current_time->tm_mday = current_time->tm_mday;
-                    cus_acc_hs->UpdateLastActive(uname, new_current_time);
+                    admin_acc_hs->UpdateLastActive(uname, new_current_time);
                     AdminHomePage(uname, fList, cus_acc_hs);
                     log_out = true;
                     break;
