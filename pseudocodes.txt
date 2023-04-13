@@ -65,9 +65,7 @@ FUNCTION DisplayUniInfo(uniArray)
     DECLARE res
     PRINT "**********Displaying All Universities Information**********"
     PRINT "| No. | Uni_name | Location | Location_code |"
-    FOR i = 0 TO i = 19
-        PRINT i + 1 + ". " + uniArray.getUniversity(i).rank + ", " + uniArray.getUniversity(i).inst_name + ", " + uniArray.getUniversity(i).loc + ", " + uniArray.getUniversity(i).loc_code + ", "
-    END FOR
+    Print the info of first 20 unis
 
     START AN INFINITE LOOP
         PRINT "Select an action: "
