@@ -127,9 +127,9 @@ FUNCTION SendFeedback(uname, fList)
     fList.insertAtEnd(feedback, feedback_time, "", "", "", uname)
 END FUNCTION
 
-FUNCTION ReadFeedback(fList)
+FUNCTION ReadFeedback(uname, fList)
     Clear command prompt
-    PRINT 
+    Print all the feedbacks by the customer
 END FUNCTION
 
 FUNCTION CheckAndDeleteFavUni(uname, savedUniList)
