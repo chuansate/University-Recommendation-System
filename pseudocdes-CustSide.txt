@@ -16,13 +16,13 @@ FUNCTION CustHomePage(uname, savedUniList, uniArray)
         ELSE IF res == "1" THEN
             CALL SortUni(uniArray)
         ELSE IF res == "2" THEN
-            
+            CALL SearchUni(uniArray)
         ELSE IF res == "3" THEN
             CALL SaveUni(uniArray, savedUniList, uname)
         ELSE IF res == "4" THEN
-            SendFeedback(uname, fList)
+            CALL SendFeedback(uname, fList)
         ELSE IF res == "5" THEN
-            
+            CALL ReadFeedback(fList)
         ELSE IF res == "6" THEN
             CALL CheckAndDeleteFavUni(uname, savedUniList) 
         ELSE 
@@ -47,10 +47,120 @@ FUNCTION SortUni(uniArray)
     END OF INFINITE LOOP
 END FUNCTION
 
+FUNCTION SearchUni(uniArray)
+    Clear command prompt
+    DECLARE ar, fsr, er
+    PRINT "**********Search University Page**********"
+    PRINT "Enter AR score: "
+    READ ar
+    PRINT "Enter FSR score: "
+    READ fsr
+    PRINT "Enter ER score: "
+    READ er
+    uni = uniArray.searchUniversity(ar, fsr, er)
+    IF uni is found THEN
+        Print all the information abuot the uni
+    ELSE
+        Raise warning.
+    END IF
+END FUNCTION
+
+FUNCTION SaveUni(uniArray, savedUniList, cus_uname)
+    Clear command prompt
+    DECLARE res, ID_uni
+    PRINT "**********Displaying All Universities Information**********"
+    Print info of first 20 universities
+    START AN INFINITE LOOP
+        PRINT "Select an action: "
+        PRINT "1. Check previous 20 universities"
+        PRINT "2. Check next 20 universities"
+        PRINT "3. Save university"
+        PRINT "4. Quit"
+        PRINT "Enter the corresponding number: "
+        READ res
+        IF res == "1" THEN
+            IF there is preceeding uni THEN
+                Print info about previous 20 uni
+            ELSE 
+                Raise warning
+            END IF
+        ELSE IF res == "2" THEN
+            IF there is following uni THEN
+                Print info about next 20 uni
+            ELSE 
+                Raise warning
+            END IF
+        ELSE IF res == "3" THEN
+            START AN INFINITE LOOP
+                PRINT "Enter ID of uni you want to save, enter Q to quit: "
+                READ ID_uni
+                IF ID_uni == "Q" THEN
+                    BREAK THE INFINITE LOOP
+                END IF
+                
+                IF ID_uni is out of bound THEN
+                    Raise warning
+                    CONTINUE
+                END IF
+                
+                IF the uni was saved before THEN
+                    Raise warning
+                ELSE
+                    Save the uni to savedUniList
+                END IF
+            END OF INFINITE LOOP
+        ELSE IF res == "4" THEN
+            RETURN
+        ELSE
+            PRINT "Invalid action, please try again!"
+        END IF
+    END OF INFINITE LOOP
+END FUNCTION
+
 FUNCTION SendFeedback(uname, fList)
     Clear command prompt
     DECLARE feedback
-    
-
+    PRINT "**********Send Feedback Page**********"
+    PRINT "Send a feedback to consult further information about the universities, enter Q to quit: "
+    READ feedback
+    SET feedback_time as current time of system
+    fList.insertAtEnd(feedback, feedback_time, "", "", "", uname)
 END FUNCTION
 
+FUNCTION ReadFeedback(fList)
+    Clear command prompt
+    PRINT 
+END FUNCTION
+
+FUNCTION CheckAndDeleteFavUni(uname, savedUniList)
+    Clear command prompt
+    DECLARE res, ID_uni
+    DECLARE favUniList
+    WHILE traversing the whole savedUniList
+        IF the saved uni belongs to uname THEN
+            Print out the info of the saved uni
+        END IF
+    END WHILE
+    
+    START AN INFINITE LOOP
+        IF a uni is removed from favourite list THEN
+            Clear command prompt
+            PRINT "**********Saved Universities Page**********"
+            Update the favourite list of the customer
+        END IF
+        
+        PRINT "Select an action: "
+        PRINT "1. Delete a saved university"
+        PRINT "2. Quit"
+        PRINT "Enter the corresponding number: "
+        READ res;
+        
+        IF res == "1" THEN
+            Delete the saved uni from savedUniList
+        ELSE IF res == "2" THEN
+            RETURN
+        ELSE 
+            PRINT "Invalid action, please try again."
+        END IF
+    END OF INFINITE LOOP
+END FUNCTION
