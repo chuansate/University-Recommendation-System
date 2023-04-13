@@ -51,7 +51,7 @@ FUNCTION NormalUsersHomePage(cus_acc_hs, admin_acc_hs, rbt, fList, savedUniList,
         ELSE IF  res == 3 THEN
             CALL RegisterAsCustomer(cus_acc_hs)
         ELSE IF  res == 4 THEN
-            CALL LoginAsAdmin(admin_acc_hs, fList, cus_acc_hs)
+            CALL LoginAsAdmin(admin_acc_hs, fList, cus_acc_hs, savedUniList)
         ELSE IF  res == 5 THEN
             CALL LoginAsCust(cus_acc_hs, savedUniList, uniArray)
         ELSE
@@ -128,7 +128,7 @@ FUNCTION RegisterAsCustomer(cus_acc_hs)
     END OF INFINITE LOOP
 END FUNCTION
 
-FUNCTION LoginAsAdmin(admin_acc_hs, fList, cus_acc_hs)
+FUNCTION LoginAsAdmin(admin_acc_hs, fList, cus_acc_hs, savedUniList)
     Clear Command Prompt
     PRINT "**********Admin Login Page**********"
     DECLARE uname, pwd, pwd_real
@@ -144,7 +144,7 @@ FUNCTION LoginAsAdmin(admin_acc_hs, fList, cus_acc_hs)
                 READ pwd
                 IF pwd == pwd_real THEN
                     Update last active time of the admin in admin_acc_hs
-                    CALL AdminHomePage(uname, fList, cus_acc_hs)
+                    CALL AdminHomePage(uname, fList, cus_acc_hs, savedUniList)
                     RETURN 
                 ELSE
                     PRINT "Wrong password. Please try again!"
@@ -181,7 +181,7 @@ FUNCTION LoginAsCust(cus_acc_hs, savedUniList, uniArray)
     END OF INFINITE LOOP
 END FUNCTION
 
-FUNCTION AdminHomePage(name, fList, cus_acc_hs)
+FUNCTION AdminHomePage(name, fList, cus_acc_hs, savedUniList)
     DECLARE res
     START AN INFINITE LOOP
         PRINT "**********Admin Home Page**********" 
@@ -204,7 +204,7 @@ FUNCTION AdminHomePage(name, fList, cus_acc_hs)
         ELSE IF res == 4 THEN
             CALL Read_ReplyFeedbacks(fList, uname)
         ELSE IF res == 5 THEN
-        
+            CALL GenerateReport(savedUniList)
         ELSE
             PRINT "Invalid input, please try again!"
         END IF
@@ -259,10 +259,76 @@ FUNCTION DeleteCustAcc(cus_acc_hs)
     PRINT "*****Delete Customers' Accounts Page*****"
     DECLARE res
     START AN INFINITE LOOP
-        PRINT Are you sure you want to delete all customers who have been inactive for 1 year? (Y/N): 
+        PRINT "Are you sure you want to delete all customers who have been inactive for 1 year? (Y/N): " 
         READ res
-        IF res == Y
+        IF res == "Y" THEN
             PRINT "All customers who have been inactive for 1 year have been deleted successfully!"
+            DECLARE res
+            START AN INFINITE LOOP
+                PRINT "Enter Q to quit: "
+                READ res
+                IF res == "Q" THEN
+                    RETURN
+                ELSE
+                    PRINT "Invalid input, please try again!"
+                END IF
+            END OF INFINITE LOOP
+            RETURN
+        ELSE IF res == "N" THEN
+            RETURN
+        ELSE
+            PRINT "Invalid input, please try again!"
+        END IF
     END OF INFINITE LOOP
 
+END FUNCTION
+
+FUNCTION Read_ReplyFeedbacks(fList, uname)
+    DECLARE res
+    current = fList.getTail()
+    Clear command prompt
+    PRINT "*****Display Feedbacks Page*****"
+    START AN INFINITE LOOP
+        PRINT "=====Feedback " + current->feedbackID + "====="
+        PRINT current.cust_uname + " asked : " + current.content + " on " + current.feedback_time
+        IF current.replied_admin == "" THEN
+            PRINT "No admin has replied yet."
+        ELSE 
+            PRINT current.replied_admin + " replied : " + current.reply_content + " on " + current.reply_time
+        END IF
+        PRINT "====================" 
+        PRINT "Choose your actions:" 
+        PRINT "0. Read previous feedback"
+        PRINT "1. Read next feedback"
+        PRINT "2. Reply to this feedback"
+        PRINT "3. Quit"
+        PRINT "Enter the number: ";
+        READ res;
+        IF res == "0" THEN
+            current = fList.MoveBackAndForth(current, res)
+        ELSE IF res == "1" THEN
+            current = fList.MoveBackAndForth(current, res)   
+        ELSE IF res == "2" THEN
+            fList.Reply(current, uname)
+        ELSE IF res == "3" THEN
+            PRINT "Going back to main page..."
+            BREAK INFINITE LOOP
+        ELSE
+            PRINT "Invalid input, please try again!"
+        END IF 
+    END OF INFINITE LOOP
+END FUNCTION
+
+FUNCTION GenerateReport(savedUniList)
+    DECLARE res
+    savedUniList.generateReport()
+    START AN INFINITE LOOP
+        PRINT "Enter Q to quit: "
+        READ res
+        IF res == "Q" THEN
+            RETURN
+        ELSE
+            PRINT "Invalid inputs, please try again!"
+        END IF
+    END OF INFINITE LOOP
 END FUNCTION
