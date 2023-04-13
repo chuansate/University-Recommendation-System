@@ -180,3 +180,89 @@ FUNCTION LoginAsCust(cus_acc_hs, savedUniList, uniArray)
         END IF
     END OF INFINITE LOOP
 END FUNCTION
+
+FUNCTION AdminHomePage(name, fList, cus_acc_hs)
+    DECLARE res
+    START AN INFINITE LOOP
+        PRINT "**********Admin Home Page**********" 
+        PRINT "0. Log out" 
+        PRINT "1. Display all customers' details"
+        PRINT "2. Modify a customer's details"
+        PRINT "3. Delete inactive customers' accounts"
+        PRINT "4. Read and reply feedbacks (move back and forth)"
+        PRINT "5. Generate report for Top 10 preferred universities"
+        PRINT "Enter your action: ";
+        READ res;
+        IF res == 0 THEN
+            RETURN
+        ELSE IF res == 1 THEN
+            CALL DisplayUserDetails(cus_acc_hs)
+        ELSE IF res == 2 THEN
+            CALL ModifyCustDetails(cus_acc_hs)
+        ELSE IF res == 3 THEN
+            CALL DeleteCustAcc(cus_acc_hs)
+        ELSE IF res == 4 THEN
+            CALL Read_ReplyFeedbacks(fList, uname)
+        ELSE IF res == 5 THEN
+        
+        ELSE
+            PRINT "Invalid input, please try again!"
+        END IF
+    END OF INFINITE LOOP
+END FUNCTION
+
+FUNCTION DisplayUserDetails(cus_acc_hs)
+    Clear command prompt
+    PRINT "**********Customers' Details**********"
+    PRINT "Username, Password, Last_Active"
+    cus_acc_hs.PrintUserAccsInTableForm()
+    DECLARE res
+    START AN INFINITE LOOP
+        PRINT "Enter Q to quit:"
+        READ res
+        IF res == "Q" THEN
+            RETURN
+        ELSE 
+            PRINT "Invalid input, please try again!"
+        END IF
+    END OF INFINITE LOOP
+END FUNCTION        
+
+FUNCTION ModifyCustDetails(cus_acc_hs)
+    SET found as 0
+    DECLARE res
+    Clear command prompt
+    PRINT "*****Modify Customers' Details Page*****"
+    DECLARE uname
+    START AN INFINITE LOOP
+        PRINT "Enter the username of the customer you want to modify his/her password: "
+        READ uname
+        found = cus_acc_hs.UpdatePwd(uname)
+        IF customer's username is found in Hash Table THEN
+            START AN INFINITE LOOP
+                PRINT "Enter Q to quit: "
+                READ res
+                IF res == "Q" THEN
+                    RETURN
+                ELSE
+                    PRINT "Invalid input, please try again!"
+                END IF
+            END OF INFINITE LOOP
+        ELSE
+            PRINT "Could not find the username of the customer, please try again!"
+        END IF
+    END OF INFINITE LOOP
+END FUNCTION
+
+FUNCTION DeleteCustAcc(cus_acc_hs)
+    Clear command prompt
+    PRINT "*****Delete Customers' Accounts Page*****"
+    DECLARE res
+    START AN INFINITE LOOP
+        PRINT Are you sure you want to delete all customers who have been inactive for 1 year? (Y/N): 
+        READ res
+        IF res == Y
+            PRINT "All customers who have been inactive for 1 year have been deleted successfully!"
+    END OF INFINITE LOOP
+
+END FUNCTION
