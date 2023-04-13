@@ -1,0 +1,56 @@
+FUNCTION CustHomePage(uname, savedUniList, uniArray)
+    DECLARE res
+    Clear command prompt
+    START AN INFINITE LOOP
+        PRINT "**********Customer Home Page**********"
+        PRINT "1. Sort universities in descending order based on AR score, FSR score, and ER score"
+        PRINT "2. Search universities based on AR score, FSR score, or ER score"
+        PRINT "3. Save favourite universities"
+        PRINT "4. Send feedbacks"
+        PRINT "5. Read feedbacks histories"
+        PRINT "6. Check and delete favourite universities"
+        PRINT "Enter your action: "
+        READ res
+        IF res == 0 THEN
+            return;
+        ELSE IF res == "1" THEN
+            CALL SortUni(uniArray)
+        ELSE IF res == "2" THEN
+            
+        ELSE IF res == "3" THEN
+            CALL SaveUni(uniArray, savedUniList, uname)
+        ELSE IF res == "4" THEN
+            SendFeedback(uname, fList)
+        ELSE IF res == "5" THEN
+            
+        ELSE IF res == "6" THEN
+            CALL CheckAndDeleteFavUni(uname, savedUniList) 
+        ELSE 
+            PRINT "Invalid input, please try again!"
+        END IF
+    END OF INFINITE LOOP
+END FUNCTION
+
+FUNCTION SortUni(uniArray)
+    Clear command prompt
+    PRINT "Here is a list of sorted unis in descending order: "
+    uniArray.quickSortByScoresAND(0, uniArray.getLength())
+    DECLARE res
+    START AN INFINITE LOOP
+        PRINT "Enter Q to quit: "
+        READ res
+        IF res == "Q" THEN
+            RETURN
+        ELSE
+            PRINT "Invalid input, please try again!"
+        END IF
+    END OF INFINITE LOOP
+END FUNCTION
+
+FUNCTION SendFeedback(uname, fList)
+    Clear command prompt
+    DECLARE feedback
+    
+
+END FUNCTION
+
