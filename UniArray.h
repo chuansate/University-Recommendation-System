@@ -60,6 +60,8 @@ private:
     int index_of_first_uni_on_print; // while displaying all unis info, cmd will display 20 unis only
     int binarySearchUni(float targetAR, int left, int right);
     void linearSearchUni(float targetAR, float targetFSR, float targetER);
+    template <typename T>
+    void customSwap(T& a, T& b);
 };
 
 #endif

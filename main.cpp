@@ -405,7 +405,8 @@ int main() {
     rbt.inOrderPrint();
     */
     
-    performQuickSort(uniArray);
+    //performQuickSort(uniArray);
+    
     /*CODES TO DISPLAY A LIST OF SORTED UNIVERSITIES, FOR CHECKING PURPOSES
     cout << "******************UNI ARRAY SORTED********************" << endl;
     for (int i = 0; i < uniArray.getSize(); ++i) {
@@ -413,11 +414,46 @@ int main() {
     }    
     */ 
 
+    /*
+    Quick sort by 3 scores, testing codes
+    */
+    // After sorting, applying binary search:
+    
+    uniArray->quickSortByScoresAND(0, uniArray->getMaxSize()-1);
+    //uniArray->printSortedUniversities();
+    uniArray->searchUniversity(100, -1, -1);
+    cout << endl;
+    uniArray->searchUniversity(-1, -1, 4.6);
+    cout << endl;
+    uniArray->searchUniversity(98.3, -1, -1);
+    cout << endl;
+    uniArray->searchUniversity(49, -1, -1);
+    cout << endl;
+    uniArray->searchUniversity(-1, 88.9, -1);
+    cout << endl;
+    
+
+
+    // Before sorting, apply linear search all the way:
+    /*
+    uniArray->searchUniversity(100, -1, -1);
+    cout << endl;
+    uniArray->searchUniversity(-1, -1, 4.6);
+    cout << endl;
+    uniArray->searchUniversity(98.3, -1, -1);
+    cout << endl;
+    uniArray->searchUniversity(49, -1, -1);
+    cout << endl;
+    uniArray->searchUniversity(-1, 88.9, -1);
+    cout << endl;
+    */
+
+
     char anything;
     cout << "Two sorting algorithms had been performed, input anything to continue: ";
     cin >> anything;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
+    exit(0);
     NormalUsersHomePage(cus_acc_hs, admin_acc_hs, rbt, fList, savedUniList, uniArray);
 
     return 0;

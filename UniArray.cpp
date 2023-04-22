@@ -67,11 +67,11 @@ int UniArray::partition(int left, int right) {
     for (int j = left; j <= right - 1; j++) {
         if (universities[j].inst_name <= pivot.inst_name) {
             i++;
-            std::swap(universities[i], universities[j]);
+            customSwap(universities[i], universities[j]);
         }
     }
 
-    std::swap(universities[i + 1], universities[right]);
+    customSwap(universities[i + 1], universities[right]);
     return i + 1;
 }
 
@@ -106,13 +106,19 @@ void UniArray::PrintTwentyUnis(char action) {
 
 bool UniArray::compareByScoresAND(const Uni& a, const Uni& b) {
     float a_arcode, a_fsrscore, a_erscore, b_arcode, b_fsrscore, b_erscore;
-    if (a_arcode != b_arcode) {
-        return a_arcode > b_arcode;
+    a_arcode = stof(a.arcode);
+    b_arcode = stof(b.arcode);
+    a_fsrscore = stof(a.fsrscore);
+    b_fsrscore = stof(b.fsrscore);
+    a_erscore = stof(a.erscore);
+    b_erscore = stof(b.erscore);
+    if (a_arcode == b_arcode && a_fsrscore == b_fsrscore) {
+        return a_erscore > b_erscore;
     }
-    if (a_fsrscore != b_fsrscore) {
+    if (a_arcode == b_arcode) {
         return a_fsrscore > b_fsrscore;
     }
-    return a_erscore > b_erscore;
+    return a_arcode > b_arcode;
 }
 
 void UniArray::quickSortByScoresAND(int left, int right) {
@@ -127,15 +133,14 @@ void UniArray::quickSortByScoresAND(int left, int right) {
 int UniArray::partitionByScoresAND(int left, int right) {
     Uni pivot = universities[right];
     int i = left - 1;
-
     for (int j = left; j <= right - 1; j++) {
         if (compareByScoresAND(universities[j], pivot)) {
             i++;
-            swap(universities[i], universities[j]);
+            customSwap(universities[i], universities[j]);
         }
     }
 
-    swap(universities[i + 1], universities[right]);
+    customSwap(universities[i + 1], universities[right]);
     return i + 1;
 }
 
@@ -153,15 +158,9 @@ void UniArray::linearSearchUni(float targetAR, float targetFSR, float targetER) 
     float currentAR = 0.0, currentFSR = 0.0, currentER = 0.0;
     for (int i = 0; i < maxSize; i++) {
         Uni currentUni = universities[i];
-        try {
-            currentAR = std::stof(currentUni.arcode);
-        } catch (const std::invalid_argument&) {}
-        try {
-            currentFSR = std::stof(currentUni.fsrscore);
-        } catch (const std::invalid_argument&) {}
-        try {
-            currentER = std::stof(currentUni.erscore);
-        } catch (const std::invalid_argument&) {}
+        currentAR = std::stof(currentUni.arcode);
+        currentFSR = std::stof(currentUni.fsrscore);
+        currentER = std::stof(currentUni.erscore);
 
         if (targetAR != -0.1 && currentAR == targetAR) {
             Uni foundUni = getUniversity(i);
@@ -227,34 +226,54 @@ int UniArray::binarySearchUni(float targetAR, int left, int right) {
 }
 
 void UniArray::searchUniversity(float targetAR, float targetFSR, float targetER) {
-    //if the target value here is -0.1, it means the filter is not being applied
+    //if the target value here is -1, it means the filter is not being applied
     int index;
-    if (sorted && targetAR != -0.1) {
+    
+    if (sorted && targetAR != -1) {
         // if the array has been sorted AND targetAR is the search key
         cout << "Binary search happening..." << endl;
         index = binarySearchUni(targetAR, 0, maxSize-1);
+        
         if (index != -1) {
-        Uni foundUni = getUniversity(index);
-        cout << "No. = " << index + 1 << endl;
-        cout << "University found:" << endl;
-        cout << "Name: " << foundUni.inst_name << endl;
-        cout << "AR Score: " << foundUni.arcode << endl;
-        cout << "FSR Score: " << foundUni.fsrscore << endl;
-        cout << "ER Score: " << foundUni.erscore << endl;
+            Uni foundUni = getUniversity(index);
+            /*
+            try {
+                cout << "foundUNi.arcode = " << foundUni.arcode << endl;
+                float test = stof(foundUni.arcode);
+            } catch (const std::invalid_argument& ia) {
+                cout << "exception !" << endl;
+            }
+            */
+            while (stof(foundUni.arcode) == targetAR) {
+                cout << "No. = " << index + 1 << endl;
+                cout << "University found:" << endl;
+                cout << "Name: " << foundUni.inst_name << endl;
+                cout << "AR Score: " << foundUni.arcode << endl;
+                cout << "FSR Score: " << foundUni.fsrscore << endl;
+                cout << "ER Score: " << foundUni.erscore << endl;
+                index++;
+                foundUni = getUniversity(index);
+            }
+            
+        } else {
+            cout << "No university found with the given search criteria." << endl;
+        }
         // try increment the `index` to search for more matching records
-    } else {
-        cout << "No university found with the given search criteria." << endl;
-    }
+        // binary search is only returning one matched record instead of multiple
     } else {
         //otherwise use linear search
         cout << "Linear search happening..." << endl;
         linearSearchUni(targetAR, targetFSR, targetER);
     }
-    
-    
 }
 
+template <typename T>
 
+void UniArray::customSwap(T& a, T& b) {
+    T temp = a;
+    a = b;
+    b = temp;
+}
 
 
 
