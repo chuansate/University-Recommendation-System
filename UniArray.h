@@ -49,6 +49,7 @@ public:
     void quickSortByScoresAND(int left, int right);
     void printSortedUniversities();
     void searchUniversity(float, float, float);
+    bool getSorted();
 
 private:
     int partition(int left, int right);

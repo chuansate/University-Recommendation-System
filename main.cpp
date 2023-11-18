@@ -31,12 +31,17 @@ void DisplayUniInfo(UniArray* uniArray) {
     system("cls");
     char res;
     cout << "**********Displaying All Universities Information**********" << endl;
-    cout << "| No. | Uni_name | Location | Location_code |" << endl;
+    cout << "|  No. |Rank|" << string(36, ' ') << "University" << string(36, ' ') << "|" << string(12, ' ') << "Location" << string(12, ' ') << "|Location Code|ARScore|FSRScore|ERScore|"<< endl;
+    int length_uni_name;
     for (int i = 0; i < 20; i++) {
-        cout << i + 1 << ". "<< uniArray->getUniversity(i).rank << ", ";
-        cout << uniArray->getUniversity(i).inst_name << ", ";
-        cout << uniArray->getUniversity(i).loc << ", ";
-        cout << uniArray->getUniversity(i).loc_code << endl;
+        cout << "|" << i + 1 << "." << string(5-to_string(i+1).length(), ' ') << "|";
+        cout << uniArray->getUniversity(i).rank << string(4-uniArray->getUniversity(i).rank.length(), ' ') << "|";
+        cout << uniArray->getUniversity(i).inst_name << string(82-uniArray->getUniversity(i).inst_name.length(), ' ')<< "|";
+        cout << uniArray->getUniversity(i).loc << string(32-uniArray->getUniversity(i).loc.length(), ' ') << "|";
+        cout << uniArray->getUniversity(i).loc_code << string(11, ' ') << "|";
+        cout << uniArray->getUniversity(i).arcode << string(7-uniArray->getUniversity(i).arcode.length(), ' ') << "|";
+        cout << uniArray->getUniversity(i).fsrscore << string(8-uniArray->getUniversity(i).fsrscore.length(), ' ') << "|";
+        cout << uniArray->getUniversity(i).erscore << string(7-uniArray->getUniversity(i).erscore.length(), ' ') << "|" << endl;
     }
     while (true) {
         cout << "Select an action: " << endl;
@@ -86,14 +91,22 @@ void SearchIndividualUni(RedBlackTree* rbt, UniArray* uniArray) {
             // NEED SOME DECORATIONS WHILE DISPLAYING INFO ABT UNI
             cout << "Rank = " << uni_ptr->univ.rank << endl;
             cout << "Name = " << uni_ptr->univ.inst_name << endl;
-            cout << "Location code = " << uni_ptr->univ.loc_code << endl << endl;
+            cout << "Location code = " << uni_ptr->univ.loc_code << endl;
+            cout << "AR score = " << uni_ptr->univ.arcode << endl;
+            cout << "ER score = " << uni_ptr->univ.erscore << endl;
+            cout << "FSR score = " << uni_ptr->univ.fsrscore << endl << endl;
 
             cout << "Binary Search took " << duration_bin_search << " microseconds." << endl;
             cout << "The university has been found! Here are the informations about the university:" << endl;
             // NEED SOME DECORATIONS WHILE DISPLAYING INFO ABT UNI
+            // cout << "Index got from binary search = " << index << endl;
             cout << "Rank = " << uniArray->getUniversity(index).rank << endl;
             cout << "Name = " << uniArray->getUniversity(index).inst_name << endl;
-            cout << "Location code = " << uniArray->getUniversity(index).loc_code << endl << endl;    
+            cout << "Location code = " << uniArray->getUniversity(index).loc_code << endl;
+            cout << "AR score = " << uniArray->getUniversity(index).arcode << endl;
+            cout << "ER score = " << uniArray->getUniversity(index).erscore << endl;
+            cout << "FSR score = " << uniArray->getUniversity(index).fsrscore << endl;
+            cout << "======================================================================" << endl << endl;
         }
     }
 }
@@ -105,12 +118,24 @@ void RegisterAsCustomer(Hash_Table* cus_acc_hs) {
     cout << "**********Register Page**********" << endl;
     string uname;
     string pwd;
-    cout << "Enter your username: ";
+    cout << "Enter your username (consists of not more than 15 characters): ";
     cin >> uname;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cout << "Enter your password: ";
+    while (uname.length() == 0 || uname.length() > 15) {
+        cout << "Format of username is invalid, try again!" << endl;
+        cout << "Enter your username (consists of not more than 15 characters): ";
+        cin >> uname;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    cout << "Enter your password (must be between 8 and 15 characters): ";
     cin >> pwd;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    while (pwd.length() < 8 || pwd.length() > 15) {
+        cout << "Format of password is invalid, try again!" << endl;
+        cout << "Enter your password (must be between 8 and 15 characters): ";
+        cin >> pwd;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
     cus_acc_hs->AddUserAcc(uname, pwd, current_time);
     char res;
     while (true) {
@@ -125,7 +150,7 @@ void RegisterAsCustomer(Hash_Table* cus_acc_hs) {
     }
 }
 
-void LoginAsAdmin(Hash_Table* admin_acc_hs, FeedbackList* fList, Hash_Table* cus_acc_hs) {
+void LoginAsAdmin(Hash_Table* admin_acc_hs, FeedbackList* fList, Hash_Table* cus_acc_hs, SavedUniList* savedUniList) {
     system("cls");
     time_t now;
     tm* current_time;
@@ -160,7 +185,7 @@ void LoginAsAdmin(Hash_Table* admin_acc_hs, FeedbackList* fList, Hash_Table* cus
                     new_current_time->tm_mon = current_time->tm_mon;
                     new_current_time->tm_mday = current_time->tm_mday;
                     admin_acc_hs->UpdateLastActive(uname, new_current_time);
-                    AdminHomePage(uname, fList, cus_acc_hs);
+                    AdminHomePage(uname, fList, cus_acc_hs, savedUniList);
                     log_out = true;
                     break;
                 } else {
@@ -171,7 +196,7 @@ void LoginAsAdmin(Hash_Table* admin_acc_hs, FeedbackList* fList, Hash_Table* cus
     }
 }
 
-void LoginAsCust(Hash_Table* cus_acc_hs, SavedUniList* savedUniList, UniArray* uniArray) {
+void LoginAsCust(Hash_Table* cus_acc_hs, SavedUniList* savedUniList, UniArray* uniArray, FeedbackList* fList) {
     system("cls");
     time_t now;
     tm* current_time;
@@ -208,7 +233,7 @@ void LoginAsCust(Hash_Table* cus_acc_hs, SavedUniList* savedUniList, UniArray* u
                     new_current_time->tm_mday = current_time->tm_mday;
                     cus_acc_hs->UpdateLastActive(uname, new_current_time);
                     //  NEW
-                    CustHomePage(uname, savedUniList, uniArray);  
+                    CustHomePage(uname, savedUniList, uniArray, fList);  
                     log_out = true;
                     break;
                 } else {
@@ -278,10 +303,10 @@ void NormalUsersHomePage(Hash_Table* cus_acc_hs, Hash_Table* admin_acc_hs, RedBl
             RegisterAsCustomer(cus_acc_hs);
             invalid_input = false;
         } else if (res == '4') {
-            LoginAsAdmin(admin_acc_hs, fList, cus_acc_hs);
+            LoginAsAdmin(admin_acc_hs, fList, cus_acc_hs, savedUniList);
             invalid_input = false;
         } else if (res == '5') {
-            LoginAsCust(cus_acc_hs, savedUniList, uniArray);
+            LoginAsCust(cus_acc_hs, savedUniList, uniArray, fList);
             invalid_input = false;
         } else {
             cout << "Invalid input, please try again!" << endl << endl;
@@ -291,15 +316,10 @@ void NormalUsersHomePage(Hash_Table* cus_acc_hs, Hash_Table* admin_acc_hs, RedBl
 }
 
 int main() {
-    
     default_time->tm_hour = 0;   default_time->tm_min = 0; default_time->tm_sec = 0;
     default_time->tm_year = 0; default_time->tm_mon = 0; default_time->tm_mday = 1;
     Hash_Table* cus_acc_hs = new Hash_Table(default_time);
     //Initializations of data (pretending we are loading data from files...)
-    /*
-    tm_mon = 0 (Jan), 1 (Feb), 2(March), ...
-    tm_year = 0 (1900), 1(1901), ...
-    */
     tm* date1 = new tm; tm* date2 = new tm; tm* date3 = new tm; tm* date_1 = new tm; tm* date_2 = new tm;
     date1->tm_hour = 0;   date1->tm_min = 0; date1->tm_sec = 0;
     date1->tm_year = 122; date1->tm_mon = 0; date1->tm_mday = 1;
@@ -329,11 +349,11 @@ int main() {
     admin_acc_hs->AddUserAcc("admin02", "admin456", date5);
     admin_acc_hs->AddUserAcc("admin03", "admin789", date6);
 
+    // Loading all unis from CSV file to initialize the Red Black Tree and Array of Structures
     RedBlackTree* rbt = new RedBlackTree; 
     UniArray* uniArray = new UniArray(1422);
     ifstream file("2023 QS World University Rankings.csv");
     long long rbt_sort_duration = 0;
-
     int col_index = 0;
     string uni_data[21];
     string line, entry, temp;
@@ -366,8 +386,7 @@ int main() {
     }
     file.close();
 
-    FeedbackList* fList = new FeedbackList;
-    
+    FeedbackList* fList = new FeedbackList;    
     //int feedbackID, string content, tm* feedback_time, string replied_admin, string reply_content, tm* reply_time, string cust_uname
     tm* date7 = new tm; tm* date8 = new tm; tm* date9 = new tm; tm* date10 = new tm;
     date7->tm_hour = 1;   date7->tm_min = 20; date7->tm_sec = 10;
@@ -379,11 +398,11 @@ int main() {
     date10->tm_hour = 1;   date10->tm_min = 13; date10->tm_sec = 30;
     date10->tm_year = 122; date10->tm_mon = 1; date10->tm_mday = 5;
 
-    fList->insertAtEnd("How much is tuition fee at Peking University?", date7, "", "", NULL, "Low");
-    fList->insertAtEnd("Hi, may I ask something?", date8, "", "", NULL, "Woo");
-    fList->insertAtEnd("When will be the campus tour of MIT?", date9, "", "", NULL, "Jon");
+    fList->insertAtEnd("How much is tuition fee at Peking University?", date7, "", "", NULL, "Low"); 
     fList->insertAtEnd("Where can I get the campus view of Standard Uni?", date10, "", "", NULL, "Woo");
-    
+    fList->insertAtEnd("When will be the campus tour of MIT?", date9, "", "", NULL, "Jon");
+    fList->insertAtEnd("Hi, may I ask something?", date8, "", "", NULL, "Woo");
+
     SavedUniList* savedUniList = new SavedUniList;
     savedUniList->insertAtEnd("Massachusetts Institute of Technology (MIT)", "Mustard");
     savedUniList->insertAtEnd("EPFL", "Low");
@@ -396,7 +415,20 @@ int main() {
     savedUniList->insertAtEnd("Peking University", "Low");
     savedUniList->insertAtEnd("Massachusetts Institute of Technology (MIT)", "woL");
     savedUniList->insertAtEnd("AGH University of Science and Technology", "Low");
+    savedUniList->insertAtEnd("Columbia University", "Low");
+    savedUniList->insertAtEnd("Columbia University", "Mustard");
+    savedUniList->insertAtEnd("Columbia University", "Jon");
+    savedUniList->insertAtEnd("Columbia University", "Woo");
+    savedUniList->insertAtEnd("Columbia University", "woL");
+    savedUniList->insertAtEnd("Nanyang Technological University Singapore (NTU)", "Mustard");
+    savedUniList->insertAtEnd("Zhejiang University", "Mustard");
+    savedUniList->insertAtEnd("Boston University", "Mustard");
+    savedUniList->insertAtEnd("Lancaster University", "Jon");
+    savedUniList->insertAtEnd("Lancaster University", "woL");
+    savedUniList->insertAtEnd("Lancaster University", "Mustard");
+    savedUniList->insertAtEnd("Hokkaido University", "Woo");
 
+    
     /* CODES TO DISPLAY TIME TAKEN FOR RED BLACK TREE TO COMPLETE SORTING */
     cout << "Sorting in Red Black Tree took " << rbt_sort_duration << " microseconds." << endl;
 
@@ -405,7 +437,7 @@ int main() {
     rbt.inOrderPrint();
     */
     
-    //performQuickSort(uniArray);
+    performQuickSort(uniArray);
     
     /*CODES TO DISPLAY A LIST OF SORTED UNIVERSITIES, FOR CHECKING PURPOSES
     cout << "******************UNI ARRAY SORTED********************" << endl;
@@ -418,24 +450,9 @@ int main() {
     Quick sort by 3 scores, testing codes
     */
     // After sorting, applying binary search:
-    
+    /*
     uniArray->quickSortByScoresAND(0, uniArray->getMaxSize()-1);
     //uniArray->printSortedUniversities();
-    uniArray->searchUniversity(100, -1, -1);
-    cout << endl;
-    uniArray->searchUniversity(-1, -1, 4.6);
-    cout << endl;
-    uniArray->searchUniversity(98.3, -1, -1);
-    cout << endl;
-    uniArray->searchUniversity(49, -1, -1);
-    cout << endl;
-    uniArray->searchUniversity(-1, 88.9, -1);
-    cout << endl;
-    
-
-
-    // Before sorting, apply linear search all the way:
-    /*
     uniArray->searchUniversity(100, -1, -1);
     cout << endl;
     uniArray->searchUniversity(-1, -1, 4.6);
@@ -449,11 +466,38 @@ int main() {
     */
 
 
+    // Before sorting, apply linear search:
+    /*
+    uniArray->printSortedUniversities();
+    uniArray->searchUniversity(100, -1, -1);
+    cout << endl;
+    uniArray->searchUniversity(-1, -1, 4.6);
+    cout << endl;
+    uniArray->searchUniversity(98.3, -1, -1);
+    cout << endl;
+    uniArray->searchUniversity(49, -1, -1);
+    cout << endl;
+    uniArray->searchUniversity(-1, 88.9, -1);
+    cout << endl;
+    */
+    
+    /*
+    int max_len = 0;
+    string location_code;
+    for (int i=0; i<uniArray->getMaxSize(); i++) {
+        if (uniArray->getUniversity(i).loc_code.length() > max_len) {
+            location_code = uniArray->getUniversity(i).loc_code;
+            max_len = uniArray->getUniversity(i).loc_code.length();
+        }
+    }
+    cout << "loc_code = " << location_code << endl;
+    cout << "max_len = " << max_len << endl;
+    */
+
     char anything;
     cout << "Two sorting algorithms had been performed, input anything to continue: ";
     cin >> anything;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    exit(0);
     NormalUsersHomePage(cus_acc_hs, admin_acc_hs, rbt, fList, savedUniList, uniArray);
 
     return 0;

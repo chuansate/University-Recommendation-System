@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include "PreferredUniQueue.h"
 using namespace std;
 
 typedef struct SAVED_UNI_REC {
@@ -11,6 +12,11 @@ typedef struct SAVED_UNI_REC {
     SAVED_UNI_REC* next;
     SAVED_UNI_REC* prev;
 }SavedUniRec;
+
+typedef struct UNI_COUNT {
+    string uniname;
+    int count;
+}UniCount;
 
 class SavedUniList {
 private:
@@ -26,6 +32,7 @@ public:
     bool UniWasSaved(string, string);
     SavedUniRec* getHead();
     void DeleteSavedUni(string, string);
+    PreferredUniQueue* countNumOfSavedByUni();
 };
 
 #endif

@@ -104,3 +104,37 @@ void SavedUniList::DeleteSavedUni(string saved_uni_name, string cust_uname) {
     }
     cout << "Record not found, unable to delete!" << endl;
 }
+
+PreferredUniQueue* SavedUniList::countNumOfSavedByUni() {
+    PreferredUniQueue* preuniq = new PreferredUniQueue;
+    UniCount counts_by_uni[1422];
+    int length = 0;
+    SavedUniRec* current = head;
+    bool found;
+    while (current != NULL) {
+        found = false;
+        for (int i = 0; i < length; i++) {
+            if (counts_by_uni[i].uniname == current->saved_uniname) {
+                counts_by_uni[i].count++;
+                found = true;
+                break;
+            }   
+        }
+        if (!found) {
+            length++;
+            counts_by_uni[length-1].uniname = current->saved_uniname;
+            counts_by_uni[length-1].count = 1;
+        }
+        current = current->next;
+    }
+
+    // cout << "Before sorting (for debugging purposes): " << endl;
+    // for (int i=0; i<length; i++){
+    //     cout << i + 1 << ". " << counts_by_uni[i].uniname << ", " << counts_by_uni[i].count << endl;
+    // }
+    
+    for (int i=0; i<length; i++){
+        preuniq->push(counts_by_uni[i].uniname, counts_by_uni[i].count);
+    }
+    return preuniq;
+}

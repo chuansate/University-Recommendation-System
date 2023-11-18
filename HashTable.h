@@ -7,16 +7,35 @@
 #include <limits>
 using namespace std;
 
+typedef struct USERACC {
+    string uname;
+    string password;
+    tm* last_active_time;
+    USERACC* next;
+}UserAcc;
+
 string tm2string(tm*);
+
+struct InactiveCust {
+    string uname;
+    InactiveCust* next;
+};
+
+class InactiveCustsList {
+private:
+    InactiveCust* head;
+    InactiveCust* tail;
+public:
+    InactiveCustsList();
+    void append(string);
+    ~InactiveCustsList();
+    void printInactiveCusts();
+    InactiveCust* getHead();
+};
+
 class Hash_Table {
 private:
     static const int tableSize = 10;
-    typedef struct USERACC {
-        string uname;
-        string password;
-        tm* last_active_time;
-        USERACC* next;
-    }UserAcc;
     UserAcc* HashTable[tableSize];//each bucket store a linked list(elem of HashTable is known as bucket)
 public:
     Hash_Table(tm* default_time);
@@ -30,6 +49,7 @@ public:
     void RemoveUserAcc(string uname);
     void PrintUserAccsInTableForm();
     int UpdatePwd(string);
-    void DeleteAllInactiveCustAcc();
+    int getTableSize();
+    UserAcc* getBucketAtIndex(int);
 };
 #endif

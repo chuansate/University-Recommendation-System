@@ -1,5 +1,4 @@
 #include "UniArray.h"
-#include <algorithm>
 
 UniArray::UniArray(int size) {
     maxSize = size;
@@ -31,6 +30,10 @@ int UniArray::getSize() const {
 
 int UniArray::getMaxSize() {
     return maxSize;
+}
+
+bool UniArray::getSorted() {
+    return sorted;
 }
 
 Uni UniArray::getUniversity(int index) {
@@ -91,15 +94,19 @@ void UniArray::PrintTwentyUnis(char action) {
     }
     system("cls");
     cout << "**********Displaying All Universities Information**********" << endl;
-    cout << "| Rank | Uni_name | Location | Location_code |" << endl;
+    cout << "|  No. |Rank|" << string(36, ' ') << "University" << string(36, ' ') << "|" << string(12, ' ') << "Location" << string(12, ' ') << "|Location Code|ARScore|FSRScore|ERScore|"<< endl;
     for (int i = 0; i < 20; i++) {
         if ((index_of_first_uni_on_print + i) == maxSize) {
             break;
         }
-        cout << index_of_first_uni_on_print+i+1 << ". "<< universities[index_of_first_uni_on_print+i ].rank << ", ";
-        cout << universities[index_of_first_uni_on_print+i].inst_name << ", ";
-        cout << universities[index_of_first_uni_on_print+i].loc << ", ";
-        cout << universities[index_of_first_uni_on_print+i].loc_code << endl;
+        cout << "|" << index_of_first_uni_on_print+i+1 << "." << string(5-to_string(index_of_first_uni_on_print+i+1).length(), ' ') << "|";
+        cout << universities[index_of_first_uni_on_print+i].rank << string(4-universities[index_of_first_uni_on_print+i].rank.length(), ' ') << "|";
+        cout << universities[index_of_first_uni_on_print+i].inst_name << string(82-universities[index_of_first_uni_on_print+i].inst_name.length(), ' ') << "|";
+        cout << universities[index_of_first_uni_on_print+i].loc << string(32-universities[index_of_first_uni_on_print+i].loc.length(), ' ') << "|";
+        cout << universities[index_of_first_uni_on_print+i].loc_code << string(11, ' ') << "|";
+        cout << universities[index_of_first_uni_on_print+i].arcode << string(7-universities[index_of_first_uni_on_print+i].arcode.length(), ' ') << "|";
+        cout << universities[index_of_first_uni_on_print+i].fsrscore << string(8-universities[index_of_first_uni_on_print+i].fsrscore.length(), ' ') << "|";
+        cout << universities[index_of_first_uni_on_print+i].erscore << string(7-universities[index_of_first_uni_on_print+i].erscore.length(), ' ') << "|" << endl;
     }
 }
 
@@ -156,38 +163,45 @@ void UniArray::printSortedUniversities() {
 void UniArray::linearSearchUni(float targetAR, float targetFSR, float targetER)  {
     bool found = false;
     float currentAR = 0.0, currentFSR = 0.0, currentER = 0.0;
+    cout << "|  No. |Rank|" << string(36, ' ') << "University" << string(36, ' ') << "|" << string(12, ' ') << "Location" << string(12, ' ') << "|Location Code|ARScore|FSRScore|ERScore|"<< endl;
     for (int i = 0; i < maxSize; i++) {
         Uni currentUni = universities[i];
         currentAR = std::stof(currentUni.arcode);
         currentFSR = std::stof(currentUni.fsrscore);
         currentER = std::stof(currentUni.erscore);
 
-        if (targetAR != -0.1 && currentAR == targetAR) {
+        if (targetAR != -1 && currentAR == targetAR) {
             Uni foundUni = getUniversity(i);
-            cout << "No. = " << i + 1 << endl;
-            cout << "University found:" << endl;
-            cout << "Name: " << foundUni.inst_name << endl;
-            cout << "AR Score: " << foundUni.arcode << endl;
-            cout << "FSR Score: " << foundUni.fsrscore << endl;
-            cout << "ER Score: " << foundUni.erscore << endl;
+            cout << "|" << i + 1 << "." << string(5-to_string(i+1).length(), ' ') << "|";
+            cout << foundUni.rank << string(4-foundUni.rank.length(), ' ') << "|";
+            cout << foundUni.inst_name << string(82-foundUni.inst_name.length(), ' ')<< "|";
+            cout << foundUni.loc << string(32-foundUni.loc.length(), ' ') << "|";
+            cout << foundUni.loc_code << string(11, ' ') << "|";
+            cout << foundUni.arcode << string(7-foundUni.arcode.length(), ' ') << "|";
+            cout << foundUni.fsrscore << string(8-foundUni.fsrscore.length(), ' ') << "|";
+            cout << foundUni.erscore << string(7-foundUni.erscore.length(), ' ') << "|" << endl;
             found = true;
-        } else if (targetFSR != -0.1 && currentFSR == targetFSR) {
+        } else if (targetFSR != -1 && currentFSR == targetFSR) {
             Uni foundUni = getUniversity(i);
-            cout << "No. = " << i + 1 << endl;
-            cout << "University found:" << endl;
-            cout << "Name: " << foundUni.inst_name << endl;
-            cout << "AR Score: " << foundUni.arcode << endl;
-            cout << "FSR Score: " << foundUni.fsrscore << endl;
-            cout << "ER Score: " << foundUni.erscore << endl;
+            cout << "|" << i + 1 << "." << string(5-to_string(i+1).length(), ' ') << "|";
+            cout << foundUni.rank << string(4-foundUni.rank.length(), ' ') << "|";
+            cout << foundUni.inst_name << string(82-foundUni.inst_name.length(), ' ')<< "|";
+            cout << foundUni.loc << string(32-foundUni.loc.length(), ' ') << "|";
+            cout << foundUni.loc_code << string(11, ' ') << "|";
+            cout << foundUni.arcode << string(7-foundUni.arcode.length(), ' ') << "|";
+            cout << foundUni.fsrscore << string(8-foundUni.fsrscore.length(), ' ') << "|";
+            cout << foundUni.erscore << string(7-foundUni.erscore.length(), ' ') << "|" << endl;
             found = true;
-        } else if (targetER != -0.1 && currentER == targetER) {
+        } else if (targetER != -1 && currentER == targetER) {
             Uni foundUni = getUniversity(i);
-            cout << "No. = " << i + 1 << endl;
-            cout << "University found:" << endl;
-            cout << "Name: " << foundUni.inst_name << endl;
-            cout << "AR Score: " << foundUni.arcode << endl;
-            cout << "FSR Score: " << foundUni.fsrscore << endl;
-            cout << "ER Score: " << foundUni.erscore << endl;
+            cout << "|" << i + 1 << "." << string(5-to_string(i+1).length(), ' ') << "|";
+            cout << foundUni.rank << string(4-foundUni.rank.length(), ' ') << "|";
+            cout << foundUni.inst_name << string(82-foundUni.inst_name.length(), ' ')<< "|";
+            cout << foundUni.loc << string(32-foundUni.loc.length(), ' ') << "|";
+            cout << foundUni.loc_code << string(11, ' ') << "|";
+            cout << foundUni.arcode << string(7-foundUni.arcode.length(), ' ') << "|";
+            cout << foundUni.fsrscore << string(8-foundUni.fsrscore.length(), ' ') << "|";
+            cout << foundUni.erscore << string(7-foundUni.erscore.length(), ' ') << "|" << endl;
             found = true;
         }
     } // No matching university found
@@ -199,6 +213,8 @@ void UniArray::linearSearchUni(float targetAR, float targetFSR, float targetER) 
 int UniArray::binarySearchUni(float targetAR, int left, int right) {
     int middle;
     int first_index;// first uni matching that criteria
+    // binary search will cut array into halves, and stop at the middle if there r multiple matched unis
+    // hence once the match uni is found, needa move the index to the front until there is no more match uni
     if (left <= right) {
         middle = left + (right - left) / 2;
 
@@ -231,38 +247,30 @@ void UniArray::searchUniversity(float targetAR, float targetFSR, float targetER)
     
     if (sorted && targetAR != -1) {
         // if the array has been sorted AND targetAR is the search key
-        cout << "Binary search happening..." << endl;
+        //cout << "Binary search happening..." << endl;
         index = binarySearchUni(targetAR, 0, maxSize-1);
         
         if (index != -1) {
             Uni foundUni = getUniversity(index);
-            /*
-            try {
-                cout << "foundUNi.arcode = " << foundUni.arcode << endl;
-                float test = stof(foundUni.arcode);
-            } catch (const std::invalid_argument& ia) {
-                cout << "exception !" << endl;
-            }
-            */
+            cout << "|  No. |Rank|" << string(36, ' ') << "University" << string(36, ' ') << "|" << string(12, ' ') << "Location" << string(12, ' ') << "|Location Code|ARScore|FSRScore|ERScore|"<< endl;
             while (stof(foundUni.arcode) == targetAR) {
-                cout << "No. = " << index + 1 << endl;
-                cout << "University found:" << endl;
-                cout << "Name: " << foundUni.inst_name << endl;
-                cout << "AR Score: " << foundUni.arcode << endl;
-                cout << "FSR Score: " << foundUni.fsrscore << endl;
-                cout << "ER Score: " << foundUni.erscore << endl;
+                cout << "|" << index + 1 << "." << string(5-to_string(index+1).length(), ' ') << "|";
+                cout << foundUni.rank << string(4-foundUni.rank.length(), ' ') << "|";
+                cout << foundUni.inst_name << string(82-foundUni.inst_name.length(), ' ')<< "|";
+                cout << foundUni.loc << string(32-foundUni.loc.length(), ' ') << "|";
+                cout << foundUni.loc_code << string(11, ' ') << "|";
+                cout << foundUni.arcode << string(7-foundUni.arcode.length(), ' ') << "|";
+                cout << foundUni.fsrscore << string(8-foundUni.fsrscore.length(), ' ') << "|";
+                cout << foundUni.erscore << string(7-foundUni.erscore.length(), ' ') << "|" << endl;
                 index++;
                 foundUni = getUniversity(index);
             }
-            
         } else {
             cout << "No university found with the given search criteria." << endl;
         }
-        // try increment the `index` to search for more matching records
-        // binary search is only returning one matched record instead of multiple
     } else {
         //otherwise use linear search
-        cout << "Linear search happening..." << endl;
+        //cout << "Linear search happening..." << endl;
         linearSearchUni(targetAR, targetFSR, targetER);
     }
 }

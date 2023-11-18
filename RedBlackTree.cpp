@@ -19,7 +19,6 @@ void RedBlackTree::initializeNULLNode(NodePtr node, NodePtr parent) {
 
 // Inserting a node
 void RedBlackTree::insert( string rank, string inst_name, string loc_code, string loc, string arcode, string arrank, string erscore, string errank, string fsrscore, string fsrrank, string cpfscore, string cpfrank, string lfrscore, string lfrrank, string lsrscore, string lsrrank, string lrnscore, string lrnrank, string gerscore, string gerrank, string scorescaled) {
-
     NodePtr node = new Node; // creating a new node, colour it as red
     node->parent = nullptr;
     node->univ = { rank, inst_name, loc_code, loc, arcode, arrank, erscore, errank, fsrscore, fsrrank, cpfscore, cpfrank, lfrscore, lfrrank, lsrscore, lsrrank, lrnscore, lrnrank, gerscore, gerrank, scorescaled};
@@ -27,11 +26,11 @@ void RedBlackTree::insert( string rank, string inst_name, string loc_code, strin
     node->right = TNULL;
     node->colour = 1; //red
 
-    NodePtr y = nullptr;
-    NodePtr x = this->root;
+    NodePtr y = nullptr; // for setting parent of current node
+    NodePtr x = this->root;// current node
 
     while (x != TNULL) {
-        y = x;
+        y = x; 
         if (node->univ.inst_name < x->univ.inst_name) {
             x = x->left;
         } else {
@@ -158,8 +157,6 @@ void RedBlackTree::rightRotate(NodePtr x) {
     x->parent = y;
 }
 
-
-
 // Preorder
 void RedBlackTree::preOrderHelper(NodePtr node) {
     if (node != TNULL) {
@@ -173,7 +170,7 @@ void RedBlackTree::preOrderHelper(NodePtr node) {
 void RedBlackTree::inOrderHelper(NodePtr node) {
     if (node != TNULL) {
         inOrderHelper(node->left);
-        cout <<  univ_index << ". " << node->univ.inst_name << ", rank = " << node->univ.rank << ", location = " << node->univ.loc << endl;
+        cout <<  univ_index << ". " << node->univ.inst_name << endl;
         univ_index++;
         inOrderHelper(node->right);
     }
