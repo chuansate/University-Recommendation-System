@@ -26,12 +26,13 @@ types of information in the system, e.g. university details, user's personal det
 university, etc. 
 
 The system contains the following functionalities: 
+
 **Normal Users**
 - Display all the universities’ information from the dataset. 
-- Sort university information in ascending order by university name 
--- Apply 2 distinct sort algorithms in this function to compare their execution time. 
+- Sort university information in ascending order by university name.
+  - Apply 2 distinct sort algorithms in this function to compare their execution time. 
 - Search individual university details.  
--- Apply 2 distinct search algorithms in this function to compare their execution time. 
+  - Apply 2 distinct search algorithms in this function to compare their execution time. 
 - Register as customer of the education exhibition.
 
 
