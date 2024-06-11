@@ -10,14 +10,14 @@ above system. A *2023 QS University Rankings dataset* will be used in this syste
 contains information of more than 1400 different universities from all over the world. It also 
 includes several attributes such as the institution’s name, location, and various sub-scores in 
 different fields, as well as the ranks of the universities. The details of the columns as below: 
-• ar (academic reputation) 
-• er (employer reputation) 
-• fsr (faculty/student ratio) 
-• cpf (citations per faculty) 
-• ifr (international faculty ratio) 
-• isr (international student ratio) 
-• irn (international research network) 
-• ger (employment outcome) 
+- ar (academic reputation)
+- er (employer reputation)
+- fsr (faculty/student ratio) 
+- cpf (citations per faculty) 
+- ifr (international faculty ratio) 
+- isr (international student ratio) 
+- irn (international research network) 
+- ger (employment outcome) 
 
 Suppose you are one of the software developers in the company, your supervisor has assigned 
 you to develop this system with THREE (3) other employees. Your team must develop it in 
